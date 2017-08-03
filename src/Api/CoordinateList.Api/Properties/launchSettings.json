@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "src": {
+    "SquareSearch": {
       "commandName": "Project"
     }
   }

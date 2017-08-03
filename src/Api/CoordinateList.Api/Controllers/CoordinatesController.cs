@@ -1,11 +1,24 @@
 ﻿using System.Collections.Generic;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using CoordinateList.Api.DtoModels;
 
-namespace src.Controllers
+namespace CoordinateList.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class CoordinatesController : Controller
+    public class CoordinatesController: Controller
     {
+        private readonly AbstractValidator<CoordinateList.Api.DtoModels.CoordinateList> _cooListValidator;
+        private readonly AbstractValidator<CoordinateBase> _cooValidator;
+
+        public CoordinatesController (
+            AbstractValidator<CoordinateList.Api.DtoModels.CoordinateList> cooListValidator,
+            AbstractValidator<CoordinateBase> cooValidator
+        ) {
+            _cooListValidator = cooListValidator;
+            _cooValidator = cooValidator;
+        }
+
         // GET api/values
         [HttpGet]
         public IActionResult Get(int listId)
@@ -20,8 +33,8 @@ namespace src.Controllers
         }
 
         // POST api/values
-        [HttpPost]
-        public IActionResult Post([FromBody]CoordinateBase coordinate)
+        [HttpPost("{listId}/coordinates")]
+        public IActionResult Post(int listId, [FromBody]CoordinateBase coordinate)
         {
             if (!ModelState.IsValid){
                 return new BadRequestResult();
@@ -30,8 +43,8 @@ namespace src.Controllers
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]CoordinateBase coordinate)
+        [HttpPut("{listId}/coordinates/{id}")]
+        public IActionResult Put(int listId, int id, [FromBody]CoordinateBase coordinate)
         {
             if (!ModelState.IsValid){
                 return new BadRequestResult();

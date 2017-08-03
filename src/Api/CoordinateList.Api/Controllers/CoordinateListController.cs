@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using CoordinateList.Api.DtoModels;
 
-namespace src.Controllers
+namespace CoordinateList.Api.Controllers
 {
     [Route("api/[controller]")]
     public class CoordinatesListController : Controller
@@ -26,12 +27,12 @@ namespace src.Controllers
             if (!ModelState.IsValid){
                 return new BadRequestResult();
             }
-            return new ObjectResult(new CoordinateList(id, "mock", new List<CoordinateBase>(){new CoordinateBase(10, 12)}));
+            return new ObjectResult(new CoordinateList.Api.DtoModels.CoordinateList(id, "mock", new List<CoordinateBase>(){new CoordinateBase(10, 12)}));
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]CoordinateList value)
+        public IActionResult Post([FromBody]CoordinateList.Api.DtoModels.CoordinateList value)
         {
             if (!ModelState.IsValid){
                 return new BadRequestResult();
