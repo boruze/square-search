@@ -10,5 +10,11 @@
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="4.0.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoordinateList.DataAccess\SquareSearch.DataAccess.csproj" />
+    <ProjectReference Include="..\CoordinateList.Entities\SquareSearch.Entities.csproj" />
+    <ProjectReference Include="..\SquareSearch.Services\SquareSearch.Services.csproj" />
   </ItemGroup>
 </Project>

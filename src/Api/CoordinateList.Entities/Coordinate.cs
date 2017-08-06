@@ -1,4 +1,4 @@
-﻿namespace CoordinateList.Api.Entities
+﻿namespace SquareSearch.Entities
 {
     public class Coordinate
     {

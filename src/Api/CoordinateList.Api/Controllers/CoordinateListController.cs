@@ -1,59 +1,111 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using CoordinateList.Api.DtoModels;
+using SquareSearch.Api.DtoModels;
+using SquareSearch.Services.Interfaces;
+using System.Linq;
+using SquareSearch.Api.DtoModels.Mappings;
+using System.Threading.Tasks;
+using SquareSearch.Api.Validators;
 
-namespace CoordinateList.Api.Controllers
+namespace SquareSearch.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class CoordinatesListController : Controller
+    public class CoordinateListController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IActionResult Get()
+        private readonly ICoordinateService _service;
+
+        public CoordinateListController(ICoordinateService coordinateListService)
         {
-            if (!ModelState.IsValid){
-                return new BadRequestResult();
-            }
-            var result = new List<CoordinateListWithId>();
-            result.Add(new CoordinateListWithId(10, "test"));
-            result.Add(new CoordinateListWithId(12, "testMock1"));
-            return new ObjectResult(result);
+            _service = coordinateListService;
         }
 
-        // GET api/values/5
+        // GET api/values
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> GetAsync(int id)
         {
-            if (!ModelState.IsValid){
+            if (!ModelState.IsValid)
+            {
                 return new BadRequestResult();
             }
-            return new ObjectResult(new CoordinateList.Api.DtoModels.CoordinateList(id, "mock", new List<CoordinateBase>(){new CoordinateBase(10, 12)}));
+
+            var result = await _service.GetList(id).ConfigureAwait(false);            
+            if (result == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new ObjectResult(result.ToCoordinateListDto());
+        }
+
+        // GET api/values
+        [HttpGet]
+        public async Task<IActionResult> GetListAsync(int limit, int offset, SortBy sortBy = SortBy.Id)
+        {
+            var result = await _service.GetListofListsAsync(limit, offset, (Entities.Enums.SortBy)sortBy).ConfigureAwait(false);
+            return new ObjectResult(result.Select(r => r.ToCoordinateListDto()));
         }
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]CoordinateList.Api.DtoModels.CoordinateList value)
+        public async Task<IActionResult> PostAsync([FromBody]CoordinateList value)
         {
-            if (!ModelState.IsValid){
+            if (!ModelState.IsValid)
+            {
                 return new BadRequestResult();
             }
-            return new ObjectResult(value);
+
+            var validator = new CoordinateListValidator();
+            var validationResult = validator.Validate(value);
+
+            if (!validationResult.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
+            var result = await _service.SaveList(value.ToCoordinateListEntity(0)).ConfigureAwait(false);
+
+            return new ObjectResult(result.ToCoordinateListDto());
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]string value)
+        public async Task<IActionResult> PutAsync(int id, [FromBody]CoordinateList value)
         {
-            if (!ModelState.IsValid){
+            if (!ModelState.IsValid)
+            {
                 return new BadRequestResult();
             }
-            return new ObjectResult(value);
+
+            var existingList = await _service.GetList(id).ConfigureAwait(false);
+            if (existingList == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var validator = new CoordinateListValidator();
+            var validationResult = validator.Validate(value);
+
+            if (!validationResult.IsValid)
+            {
+                return new BadRequestResult();
+            }
+
+            var result = await _service.SaveList(value.ToCoordinateListEntity(id)).ConfigureAwait(false);
+
+            return new ObjectResult(result.ToCoordinateListDto());
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            var existingList = await _service.GetList(id).ConfigureAwait(false);
+            if (existingList == null)
+            {
+                return new NotFoundResult();
+            }
+
+            await _service.DeleteList(id).ConfigureAwait(false);
+            return new EmptyResult();
         }
     }
 }

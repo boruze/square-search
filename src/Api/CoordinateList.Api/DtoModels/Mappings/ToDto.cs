@@ -1,17 +1,12 @@
 ﻿using System.Linq;
 
-namespace CoordinateList.Api.DtoModels.Mappings
+namespace SquareSearch.Api.DtoModels.Mappings
 {
     public static class ToDto
     {
-        public static CoordinateBaseWithId ToCoordinateBaseWithIdDto(this Entities.Coordinate coo)
+        public static Coordinate ToCoordinateBaseDto(this Entities.Coordinate coo)
         {
-            return new CoordinateBaseWithId(coo.Id, coo.PointX, coo.PointY);
-        }
-
-        public static CoordinateBase ToCoordinateBaseDto(this Entities.Coordinate coo)
-        {
-            return new CoordinateBase(coo.PointX, coo.PointY);
+            return new Coordinate(coo.PointX, coo.PointY);
         }
 
         public static CoordinateList ToCoordinateListDto(this Entities.CoordinateList coo)

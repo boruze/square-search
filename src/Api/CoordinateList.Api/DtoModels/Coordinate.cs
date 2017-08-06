@@ -1,28 +1,28 @@
 using System;
 using System.Collections.Generic;
 
-namespace CoordinateList.Api.DtoModels
+namespace SquareSearch.Api.DtoModels
 {
-    public class CoordinateBase
+    public class Coordinate
     {
         public int PointX { get; }
         public int PointY { get; }
 
-        public CoordinateBase(int pointX, int pointY)
+        public Coordinate(int pointX, int pointY)
         {
             PointX = pointX;
             PointY = pointY;
         }
     }
 
-    public class CoordinateEqualityComparer : IEqualityComparer<CoordinateBase>
+    public class CoordinateEqualityComparer : IEqualityComparer<Coordinate>
     {
-        public bool Equals(CoordinateBase x, CoordinateBase y)
+        public bool Equals(Coordinate x, Coordinate y)
         {
             return x.PointX == y.PointX && x.PointY == y.PointY;
         }
 
-        public int GetHashCode(CoordinateBase obj)
+        public int GetHashCode(Coordinate obj)
         {
             return new { obj.PointY, obj.PointX }.GetHashCode();
         }

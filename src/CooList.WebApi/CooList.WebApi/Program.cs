@@ -1,8 +1,7 @@
 ﻿using System.IO;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-namespace SquareSearch.Api
+namespace CooList.WebApi
 {
     public class Program
     {
@@ -13,6 +12,7 @@ namespace SquareSearch.Api
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
+                .UseApplicationInsights()
                 .Build();
 
             host.Run();

@@ -1,9 +1,9 @@
-using CoordinateList.Api.DtoModels;
+using SquareSearch.Api.DtoModels;
 using FluentValidation;
 
-namespace CoordinateList.Api.Validators
+namespace SquareSearch.Api.Validators
 {
-    public class CoordinateValidator : AbstractValidator<CoordinateBase>
+    public class CoordinateValidator : AbstractValidator<Coordinate>
     {
         public const int largestCoordinate = 5000;
         public const int smallestCoordinate = -5000;

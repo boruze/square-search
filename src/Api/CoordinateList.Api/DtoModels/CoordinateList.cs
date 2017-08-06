@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 
-namespace CoordinateList.Api.DtoModels
+namespace SquareSearch.Api.DtoModels
 {
-    public class CoordinateList : CoordinateListWithId
+    public class CoordinateList
     {
-        public IList<CoordinateBase> Coordinates { get; }
+        public int Id { get; }
+        public string Name { get; }
+        public IList<Coordinate> Coordinates { get; }
 
-        public CoordinateList(int id, string name, IList<CoordinateBase> coordinates)
-            : base(id, name)
+        public CoordinateList(int id, string name, IList<Coordinate> coordinates)
         {
+            Id = id;
+            Name = name;
             Coordinates = coordinates;
         }
     }
