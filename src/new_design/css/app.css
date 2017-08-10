@@ -1,4 +1,18 @@
 .small-height {
     height: 14px;
     line-height: 14px;
+    overflow-y: scroll;
+    height: 200px;
+    margin-bottom: 20px;
+}
+.medium-height{
+    height: 14px;
+    line-height: 14px;
+    overflow-y: scroll;
+    height: 400px;
+    margin-bottom: 20px;
+}
+
+.disabled {
+    pointer-events: none;
 }
