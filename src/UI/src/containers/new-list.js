@@ -6,6 +6,7 @@ import Immutable from "immutable";
 import {getAllItems, getItem, saveItem} from "../api/coordinate-list-service";
 import {push} from 'react-router-redux';
 import translations from "../configuration/translations";
+import {readFileToString} from "../services/file-loader";
 
 const mapStateToProps = (state) => {
   return {
@@ -55,39 +56,29 @@ const mapDispatchToProps = (dispatch) => {
           .then(() => dispatch(push(`/?limit=5&offset=1&sortBy=1`)), (resp) => dispatch(actions.setErrors(mapApiErrors(resp))));
     },
     loadFromFile: (file) => {
-      const getFileData = (fileName) => {
-        return new Promise(function(resolve, reject){
-        let reader = new FileReader();
-          reader.onloadend = (c) => {
-            if (c.target.readyState == FileReader.DONE){
-              resolve(c.target.result);
-            }
+      return readFileToString(file.target.files[0])
+        .then((f) => {
+          try {
+            const coordinatePairs = f.split(/\r?\n/);
+            const uniqueCoordinatePairs = coordinatePairs.filter(
+                (item, index, parentArray) => parentArray.indexOf(item) === index)
+            const stateItems = uniqueCoordinatePairs.map(coordinate =>
+              {
+                var parsed = coordinate.split(" ");
+                return {
+                pointX: parsed[0],
+                pointY: parsed[1]
+              }
+              });
+              dispatch(actions.setCoordinates(stateItems));
+              if (uniqueCoordinatePairs.length !== coordinatePairs.length){
+                dispatch(actions.setErrors(["Duplicate coordinates were removed"]));
+              }
           }
-          reader.readAsText(fileName);
-        });}
-      return getFileData(file.target.files[0]).then((f) => {
-        
-      try {
-        const coordinatePairs = f.split(/\r?\n/);
-        const uniqueCoordinatePairs = coordinatePairs.filter(
-            (item, index, parentArray) => parentArray.indexOf(item) === index)
-        const stateItems = uniqueCoordinatePairs.map(coordinate =>
-          {
-            var parsed = coordinate.split(" ");
-            return {
-            pointX: parsed[0],
-            pointY: parsed[1]
+          catch(err) {
+              dispatch(actions.setErrors(["Could not parse file"]));
           }
-          });
-          dispatch(actions.setCoordinates(stateItems));
-          if (uniqueCoordinatePairs.length !== coordinatePairs.length){
-            dispatch(actions.setErrors(["Duplicate coordinates were removed"]));
-          }
-      }
-      catch(err) {
-          dispatch(actions.setErrors(["Could not parse file"]));
-      }
-    });
+        });
     }
   }
 }
