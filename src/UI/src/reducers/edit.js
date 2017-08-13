@@ -8,7 +8,9 @@ const actionTypes = {
     UPDATE_COORDINATE: "UPDATE_COORDINATE",
     REMOVE_COORDINATE: "REMOVE_COORDINATE",
     SET_COORDINATES: "SET_COORDINATES",
-    SET_MESSAGE: "SET_MESSAGE"
+    SET_MESSAGE: "SET_MESSAGE",
+    ADD_SQUARE: "ADD_SQUARE",
+    CLEAR_SQUARES: "CLEAR_SQUARES"
 }
 
 export const actions = {
@@ -16,6 +18,17 @@ export const actions = {
         return {
             type: actionTypes.SET_NAME,
             name: name
+        }
+    },
+    addSquare: (square) => {
+        return {
+            type: actionTypes.ADD_SQUARE,
+            square: square
+        }
+    },
+    clearSquares: () => {
+        return {
+            type: actionTypes.CLEAR_SQUARES
         }
     },
     setId: (id) => {
@@ -57,9 +70,11 @@ export const actions = {
     }
 }
 
-export default function EditReducer (state = Immutable.fromJS({coordinates: []}), action) {
+export default function EditReducer (state = Immutable.fromJS({coordinates: [], squares: []}), action) {
     const existingCoordinates = state.get("coordinates");
-    if (action.type !== actionTypes.SET_MESSAGE){
+    if (action.type !== actionTypes.SET_MESSAGE
+        || action.type !== actionTypes.ADD_SQUARE
+        || action.type !== actionTypes.CLEAR_SQUARES){
             state = state.set("message", undefined);
         }
     switch (action.type) {
@@ -68,7 +83,7 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: []})
                 const id = action.payload.pathname.substring(1, action.payload.pathname.length);
                 return state.set("id", +id);
             } else {
-                return Immutable.fromJS({coordinates: [], message: undefined});
+                return Immutable.fromJS({coordinates: [], squares: [], message: undefined});
             }
         case actionTypes.SET_ID:
             return state.set("id", action.id);
@@ -84,6 +99,10 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: []})
             return state.set("coordinates", existingCoordinates.delete(action.index));
         case actionTypes.SET_MESSAGE:
             return state.set("message", Immutable.fromJS(action.message));
+        case actionTypes.ADD_SQUARE:
+            return state.set("squares", state.get("squares").push(action.square));
+        case actionTypes.CLEAR_SQUARES:
+            return state.set("squares", Immutable.fromJS([]));
         default:
             return state;
     }

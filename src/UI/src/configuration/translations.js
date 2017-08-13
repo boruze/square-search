@@ -10,7 +10,7 @@ const translations = {
     nextPage: "Next",
     prevPage: "Previous",
     loadFromFile: "Load from file",
-    listTitle: "Lists of coordinates",
+    listTitle: "Lists",
     id: "Id",
     name: "Name",
     edit: "Edit",

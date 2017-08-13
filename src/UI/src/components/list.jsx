@@ -1,6 +1,7 @@
 import React from "react";
 import translations from "../configuration/translations";
 import {Link} from 'react-router-dom';
+import MessageComponent from "./message";
 
 const itemsPerPageSelection = [5, 10, 30, 50];
 const sortBySelection = [{name: "default", value: 1},{name: "name", value: 2}];
@@ -58,7 +59,8 @@ class CoordinateList extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="nine columns"><h5>{translations.listTitle}</h5></div>
+                    <div className="one column"><h5>{translations.listTitle}</h5></div>
+                    <MessageComponent message={this.props.message}/>
                     <div className="three columns u-pull-right"><Link className="button button-primary" to="/0">{translations.addList}</Link></div>
                 </div>
                 {this.props.items.size ? getListItems(this.props): null}

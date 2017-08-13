@@ -24,6 +24,7 @@ const doesSquareRepeat = (s) => {
 }
 
 const findUniqueSquares = (coordinateList, onNewSquareFound) => {
+    foundSquares = [];
     let totalSquareCount = 0;
     for (var i = 0; i < coordinateList.length; i++) {
         for (var j = 0; j < coordinateList.length; j++) {
@@ -63,6 +64,7 @@ const findUniqueSquares = (coordinateList, onNewSquareFound) => {
                         break;
                     }
                     onNewSquareFound(square);
+                    console.log("called found square");
                     totalSquareCount++;
                     break; //no need to finish iterating the fourth time, if the square is found
                 };
@@ -72,4 +74,11 @@ const findUniqueSquares = (coordinateList, onNewSquareFound) => {
     return totalSquareCount;
 }
 
-export default findUniqueSquares;
+const findUniqueSquaresPromise = (coordinates, onSquareFound) => {
+    return new Promise((resolve, reject) => {
+        let count = findUniqueSquares(coordinates, onSquareFound);
+        resolve(count);
+    });
+}
+
+export default findUniqueSquaresPromise;

@@ -7,12 +7,16 @@ import {getAllItems, getItem, saveItem} from "../api/coordinate-list-service";
 import {push} from 'react-router-redux';
 import translations from "../configuration/translations";
 import {readFileToString} from "../services/file-reader";
+import findUniqueSquaresPromise from "../services/square-search";
 
 const mapStateToProps = (state) => {
+  const squares = state.edit.get("squares");
   return {
-    coordinates: state.edit.get("coordinates") || Immutable.fromJS([]),
-    errors: state.edit.get("errors") || Immutable.fromJS([]),
+    coordinates: state.edit.get("coordinates").toJSON() || [],
     title: state.edit.get("name") || translations.newList,
+    name: state.edit.get("name"),
+    squares: squares.size ? squares.toJSON() : [],
+    squareCount: squares.size,
     message: state.edit.get("message"),
     renderForm: !state.edit.get("id") || state.edit.get("id") && state.edit.get("name")
   };
@@ -26,31 +30,42 @@ const mapApiErrors = (response) => {
   }
 }
 const mapDispatchToProps = (dispatch) => {
+  const onSquareFound = (square) => {
+    return dispatch(actions.addSquare(square));
+  }
   return {
     getData: (id) => {
       if (id > 0){
         return getItem(id)
             .then(listItem => {
+                findUniqueSquaresPromise(listItem.coordinates, onSquareFound);
                 dispatch(actions.setName(listItem.name));
                 dispatch(actions.setId(listItem.id));
-                dispatch(actions.setCoordinates(listItem.coordinates));
+                return dispatch(actions.setCoordinates(listItem.coordinates));
             },
           (resp) => dispatch(actions.setMessage({type: "error", message: mapApiErrors(resp)})));
       }
     },
     onCoordinateChange: (index, coordinate) => {
-      return dispatch(actions.updateCoordinate(index, coordinate));
+      dispatch(actions.clearSquares());
+      dispatch(actions.updateCoordinate(index, coordinate));
+      return findUniqueSquaresPromise(state.edit.get("coordinates").toJSON(), onSquareFound);
     },
     removeCoordinate: index => {
-        return dispatch(actions.removeCoordinate(index));
+      dispatch(actions.clearSquares());
+      dispatch(actions.removeCoordinate(index));
+      return findUniqueSquaresPromise(state.edit.get("coordinates").toJSON(), onSquareFound);
     },
     onNameChange: name => {
         return dispatch(actions.setName(name));
     },
     onNewCoordinate: () => {
-      return dispatch(actions.addCoordinate({pointX: 0, pointY: 0}));
+      dispatch(actions.clearSquares());
+      dispatch(actions.addCoordinate({pointX: 0, pointY: 0}));
+      return findUniqueSquaresPromise(state.edit.get("coordinates").toJSON(), onSquareFound);
     },
     clearCoordinates: () => {
+      dispatch(actions.clearSquares());
         return dispatch(actions.setCoordinates([]));
     },
     onSubmitClick: (id = 0, name, coordinates) => {

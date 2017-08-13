@@ -1,11 +1,12 @@
 import Component from "../components/list";
 import {ListReducer, actions} from "../reducers/list";
 import React from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import Immutable from "immutable";
 import {getAllItems, deleteItem} from "../api/coordinate-list-service";
 import queryStringFromHash from "../services/query-string-parser";
 import {push} from 'react-router-redux';
+import {translations} from "../configuration/translations";
 
 //cannot access some parts of state for some reason, TODO: check why
 let total = 0;
@@ -21,7 +22,10 @@ const loadItems = (dispatch, limit, offset, sortBy) => {
       return getAllItems(limit, offset, sortBy)
         .then(items => {
           total = items.totalCount;
-          return dispatch(actions.setItems(items.items, items.totalCount))
+          return dispatch(actions.setItems(items.items, items.totalCount));
+        },
+        (resp) => {
+          return dispatch(actions.setListMessage({type: "error", message: translations.generalError}));
         });
 }
 const getPrevLink = (dispatch, state) => {
@@ -70,6 +74,7 @@ const mapStateToProps = (state) => {
   return {
     items: state.list.get("lists"),
     itemsPerPage: queryStr.limit,
+    message: state.list.get("message"),
     currentSortBy: queryStr.sortBy
   };
 }
