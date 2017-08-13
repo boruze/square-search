@@ -1,10 +1,10 @@
 var webpack = require('webpack');
 var path = require('path');
-
+var sourceDir = __dirname + '/src';
 var config = {
-  entry: __dirname + '/index.js',
+  entry: sourceDir + '/index.js',
   output: {
-    path: __dirname,
+    path: sourceDir,
     filename: 'app.js'
     },
     externals: {
@@ -15,16 +15,9 @@ var config = {
     },
     module : {
         loaders : [
-            {
-                test : /\.jsx?/,
-                include : __dirname,
-                exclude: "/node_modules/",
-                loader: 'babel-loader'
-            },
-            {
-                test: /\.json$/,
-                loader: 'json-loader'
-            }
+            {test: /\.js$/ , loader:'babel-loader', exclude: '/node_modules/'},
+            {test: /\.jsx$/ , loader:'babel-loader', exclude: '/node_modules/'},
+            {test: /\.json$/, loader: 'json-loader' }
         ]
     }
 };

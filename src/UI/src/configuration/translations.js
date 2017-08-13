@@ -9,7 +9,16 @@ const translations = {
     generalError: "Something bad happened, please try again later",
     nextPage: "Next",
     prevPage: "Previous",
-    loadFromFile: "Load from file"
+    loadFromFile: "Load from file",
+    listTitle: "Lists",
+    id: "Id",
+    name: "Name",
+    edit: "Edit",
+    delete: "Delete",
+    newList: "New List",
+    squares: "Squares",
+    coordinates: "Coordinates",
+    returnToList: "Return to list"
 };
 
 export default translations;
