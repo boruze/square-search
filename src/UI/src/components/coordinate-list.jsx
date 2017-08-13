@@ -29,6 +29,27 @@ const getListItems = (props) => {
         </div>
     </div>
 };
+const getPagingAndSorting = (props) => {
+    return <div className="row mt-10">
+                <div className="one column">
+                    {props.getPrevLink ? <button onClick={props.getPrevLink}>{`<`}</button> : <button className="disabled">{`<`}</button>}
+                </div>
+                <div className="one column">
+                    {props.getNextLink ? <button onClick={this.props.getNextLink}>{`>`}</button> : <button className="disabled">{`>`}</button>}
+                </div>
+                <div className="three columns u-pull-right" value={props.itemsPerPage} onChange={(val) =>  props.onItemsInPageChange(val.target.value)}>
+                    <select className="u-pull-right">
+                        {itemsPerPageSelection.map((item, key) => <option key={key} value={item}>{item} items per page</option>)}
+                    </select>
+                </div>
+                <div className="two columns u-pull-right">
+                    <select value={props.currentSortBy} onChange={(val) => props.onSortByChange(val.target.value)} className="u-pull-right">
+                        <option value="id">Sort by Id</option>
+                        <option value="name">Sort by Name</option>
+                    </select>
+                </div>
+            </div>;
+};
 class CoordinateList extends React.Component {
     componentDidMount() {
         this.props.getData();
@@ -41,25 +62,7 @@ class CoordinateList extends React.Component {
                     <div className="three columns u-pull-right"><Link className="button button-primary" to="/0">{translations.addList}</Link></div>
                 </div>
                 {this.props.items.size ? getListItems(this.props): null}
-                <div className="row mt-10">
-                <div className="one column">
-                    {this.props.getPrevLink ? <button onClick={this.props.getPrevLink}>{`<`}</button> : <button className="disabled">{`<`}</button>}
-                </div>
-                <div className="one column">
-                    {this.props.getNextLink ? <button onClick={this.props.getNextLink}>{`>`}</button> : <button className="disabled">{`>`}</button>}
-                </div>
-                <div className="three columns u-pull-right" value={this.props.itemsPerPage} onChange={(val) =>  this.props.onItemsInPageChange(val.target.value)}>
-                    <select className="u-pull-right">
-                        {itemsPerPageSelection.map((item, key) => <option key={key} value={item}>{item} items per page</option>)}
-                    </select>
-                </div>
-                <div className="two columns u-pull-right">
-                    <select value={this.props.currentSortBy} onChange={(val) => this.props.onSortByChange(val.target.value)} className="u-pull-right">
-                        <option value="id">Sort by Id</option>
-                        <option value="name">Sort by Name</option>
-                    </select>
-                </div>
-            </div>
+                {this.props.items.size ? getPagingAndSorting(this.props): null}
             </div>);
     }
 }
