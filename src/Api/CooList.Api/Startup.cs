@@ -39,7 +39,14 @@ namespace SquareSearch.Api
         {
             // Add framework services.
             services.AddMvc();
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy("DevelopmentPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
             IntegrateSimpleInjector(services);
         }
 
@@ -60,7 +67,8 @@ namespace SquareSearch.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             InitializeContainer(app);
-
+            //TODO: separate policies, once app has deployment configured
+            app.UseCors("DevelopmentPolicy");
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
