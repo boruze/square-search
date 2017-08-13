@@ -1,5 +1,7 @@
 import Immutable from "immutable";
-import { LOCATION_CHANGE } from 'react-router-redux'
+import {LOCATION_CHANGE} from 'react-router-redux'
+import queryStringFromHash from "../services/query-string-parser";
+import findUniqueSquaresPromise from "../services/square-search";
 
 const actionTypes = {
     SET_NAME: "SET_NAME",
@@ -8,12 +10,20 @@ const actionTypes = {
     UPDATE_COORDINATE: "UPDATE_COORDINATE",
     REMOVE_COORDINATE: "REMOVE_COORDINATE",
     SET_COORDINATES: "SET_COORDINATES",
+    SET_VISIBLE_COORDINATES_FILTER: "SET_VISIBLE_COORDINATES_FILTER",
     SET_MESSAGE: "SET_MESSAGE",
     ADD_SQUARE: "ADD_SQUARE",
-    CLEAR_SQUARES: "CLEAR_SQUARES"
+    CLEAR_SQUARES: "CLEAR_SQUARES",
+    RECALCULATE_SQUARES: "RECALCULATE_SQUARES"
 }
 
 export const actions = {
+    recalculateSquares: (onSquareFound) => {
+        return {
+            type: actionTypes.RECALCULATE_SQUARES,
+            onSquareFound: onSquareFound
+        }
+    },
     setName: (name) => {
         return {
             type: actionTypes.SET_NAME,
@@ -49,6 +59,12 @@ export const actions = {
             coordinate: coordinate
         }
     },
+    setVisibleCoordinateFilter: (coordinates) => {
+        return {
+            type: actionTypes.SET_VISIBLE_COORDINATES_FILTER,
+            coordinates: coordinates
+        }
+    },
     updateCoordinate: (index, coordinate) => {
         return {
             type: actionTypes.UPDATE_COORDINATE,
@@ -70,7 +86,7 @@ export const actions = {
     }
 }
 
-export default function EditReducer (state = Immutable.fromJS({coordinates: [], squares: []}), action) {
+export default function EditReducer (state = Immutable.fromJS({coordinates: [], squares: [], filterVisibleCoordinates: {limit: 5, offset: 0}}), action) {
     const existingCoordinates = state.get("coordinates");
     if (action.type !== actionTypes.SET_MESSAGE
         || action.type !== actionTypes.ADD_SQUARE
@@ -83,7 +99,7 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: [], 
                 const id = action.payload.pathname.substring(1, action.payload.pathname.length);
                 return state.set("id", +id);
             } else {
-                return Immutable.fromJS({coordinates: [], squares: [], message: undefined});
+                return Immutable.fromJS({coordinates: [], squares: [], message: undefined, filterVisibleCoordinates: {}});
             }
         case actionTypes.SET_ID:
             return state.set("id", action.id);
@@ -92,7 +108,7 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: [], 
         case actionTypes.SET_COORDINATES:
             return state.set("coordinates", Immutable.fromJS(action.coordinates));
         case actionTypes.ADD_COORDINATE:
-            return state.set("coordinates", existingCoordinates.push(action.coordinate));
+            return state.set("coordinates", existingCoordinates.insert(state.get("filterVisibleCoordinates").get("offset"), action.coordinate));
         case actionTypes.UPDATE_COORDINATE:
             return state.set("coordinates", existingCoordinates.set(action.index, action.coordinate));
         case actionTypes.REMOVE_COORDINATE:
@@ -103,6 +119,15 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: [], 
             return state.set("squares", state.get("squares").push(action.square));
         case actionTypes.CLEAR_SQUARES:
             return state.set("squares", Immutable.fromJS([]));
+        case actionTypes.SET_VISIBLE_COORDINATES_FILTER:
+            return state.set("filterVisibleCoordinates", Immutable.fromJS(action.coordinates));
+        case actionTypes.RECALCULATE_SQUARES:
+            const filter = state.get("filterVisibleCoordinates").toJSON();
+            findUniqueSquaresPromise(
+                existingCoordinates.toJSON().slice(filter.offset, filter.limit),
+                action.onSquareFound
+            );
+            return state;
         default:
             return state;
     }

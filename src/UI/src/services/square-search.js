@@ -42,10 +42,14 @@ const findUniqueSquares = (coordinateList, onNewSquareFound) => {
                 }
                 for (var l = 0; l < coordinateList.length; l++)  {
                     if (i === l || j === l || k === l) {
-                            continue;
+                        continue;
                     }
                     const fourthThirdDist = calculateDistance(coordinateList[k], coordinateList[l]);
                     if (secondThirdDist !== fourthThirdDist){
+                        continue;
+                    }
+                    const fourthFirstDist = calculateDistance(coordinateList[l], coordinateList[i]);
+                    if (fourthFirstDist !== fourthThirdDist){
                         continue;
                     }
                     const fourthSecondDist = calculateDistance(coordinateList[l], coordinateList[j]);
@@ -64,7 +68,8 @@ const findUniqueSquares = (coordinateList, onNewSquareFound) => {
                         break;
                     }
                     onNewSquareFound(square);
-                    console.log("called found square");
+                    console.log("onNewSquareFound called")
+                    
                     totalSquareCount++;
                     break; //no need to finish iterating the fourth time, if the square is found
                 };
@@ -75,6 +80,7 @@ const findUniqueSquares = (coordinateList, onNewSquareFound) => {
 }
 
 const findUniqueSquaresPromise = (coordinates, onSquareFound) => {
+    console.log("findUniqueSquaresPromise")
     return new Promise((resolve, reject) => {
         let count = findUniqueSquares(coordinates, onSquareFound);
         resolve(count);

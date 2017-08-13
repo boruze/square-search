@@ -19,7 +19,7 @@ const renderForm = (props) => {
                         <button onClick={props.clearCoordinates} className="button u-pull-right">{translations.clear}</button>
                         <button className="button u-pull-right" onClick={() => document.getElementById('file').click()}>{translations.loadFromFile}</button>
                         <input type="file" id="file" onChange={(file) => props.loadFromFile(file)} style={{display:"none"}}/>
-                        <button onClick={props.onNewCoordinate} className="button u-pull-right">{translations.add}</button>
+                        <button onClick={() => props.onNewCoordinate(props.limit, props.offset)} className="button u-pull-right">{translations.add}</button>
                     </div>
                     <div className="six columns">
                         <label>{translations.squares}</label>
@@ -28,21 +28,29 @@ const renderForm = (props) => {
             <div className="row">
                 <div className="six columns">
                 <div className="small-height">
-                    {props.coordinates.map((coordinate, key) =>
+                    {props.visibleCoordinates.map((coordinate, key) =>
                     <div key={key} className="row">
                         <div className="four columns">
                             <input className="u-full-width" type="number" value={coordinate.pointX} placeholder="0"
-                            onChange={(val) => props.onCoordinateChange(key, {pointX: val.target.value, pointY: coordinate.pointY})}/>
+                            onChange={(val) => props.onCoordinateChange(key, {pointX: val.target.value, pointY: coordinate.pointY}, props.limit, props.offset)}/>
                         </div>
                         <div className="four columns">
                             <input className="u-full-width" type="number"
                             value={coordinate.pointY} placeholder="0"
-                            onChange={(val) => props.onCoordinateChange(key, {pointX: coordinate.pointX, pointY: val.target.value})}/>
+                            onChange={(val) => props.onCoordinateChange(key, {pointX: coordinate.pointX, pointY: val.target.value}, props.limit, props.offset)}/>
                         </div>
                         <div className="one column">
-                            <button onClick={() => props.removeCoordinate(key)} className="button button-primary">-</button>
+                            <button onClick={() => props.removeCoordinate(key, props.limit, props.offset)} className="button button-primary">-</button>
                         </div>
                     </div>)}
+                    </div>
+                    <div className="row">
+                        <div className="two columns">
+                            {props.prevLink ? <button onClick={() => props.onPrevLinkClick(props.id, props.limit, props.offset)}>{`<`}</button> : <button className="disabled">{`<`}</button>}
+                        </div>
+                        <div className="ten columns">
+                            {props.nextLink ? <button onClick={() => props.onNextLinkClick(props.id, props.limit, props.offset)}>{`>`}</button> : <button className="disabled">{`>`}</button>}
+                        </div>
                     </div>
                 </div>
                 <div className="six columns">
@@ -87,7 +95,7 @@ const renderForm = (props) => {
 
 class NewList extends React.Component {
     componentDidMount() {
-        this.props.getData(this.props.match.params.id);
+        this.props.getData(this.props.id, this.props.limit, this.props.offset);
     }
     render() {
         return (

@@ -8,7 +8,6 @@ import queryStringFromHash from "../services/query-string-parser";
 import {push} from 'react-router-redux';
 import {translations} from "../configuration/translations";
 
-//cannot access some parts of state for some reason, TODO: check why
 let total = 0;
 const getRouteWithDefaultValues = (state) => {
     let result = queryStringFromHash(state);
@@ -32,7 +31,7 @@ const renderPrevLink = (state) => {
 }
 const getOnPrevLinkClick = (dispatch, state) => {
   const queryStr = getRouteWithDefaultValues(state);
-  const newOffset = queryStr.offset - queryStr.limit;
+  const newOffset = +queryStr.offset - +queryStr.limit;
   return () => {
       dispatch(push(`/?limit=${queryStr.limit}&offset=${newOffset}&sortBy=${queryStr.sortBy}`));
       return loadItems(dispatch, queryStr.limit, newOffset, queryStr.sortBy);

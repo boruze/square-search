@@ -31,7 +31,6 @@ const getListItems = (props) => {
     </div>
 };
 const getPagingAndSorting = (props) => {
-    console.log(props)
     return <div className="row mt-10">
                 <div className="one column">
                     {props.prevLink ? <button onClick={props.onPrevLinkClick}>{`<`}</button> : <button className="disabled">{`<`}</button>}
