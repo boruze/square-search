@@ -12,7 +12,8 @@ const mapStateToProps = (state) => {
   return {
     coordinates: state.edit.get("coordinates") || Immutable.fromJS([]),
     name: state.edit.get("name") || "",
-    errors: state.edit.get("errors") || Immutable.fromJS([])
+    errors: state.edit.get("errors") || Immutable.fromJS([]),
+    title: state.edit.get("name") || translations.newLists
   };
 }
 const mapApiErrors = (response) => {

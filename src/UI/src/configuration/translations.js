@@ -14,7 +14,11 @@ const translations = {
     id: "Id",
     name: "Name",
     edit: "Edit",
-    delete: "Delete"
+    delete: "Delete",
+    newList: "New List",
+    squares: "Squares",
+    coordinates: "Coordinates",
+    returnToList: "Return to list"
 };
 
 export default translations;

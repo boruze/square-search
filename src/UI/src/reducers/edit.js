@@ -1,4 +1,5 @@
 import Immutable from "immutable";
+import { LOCATION_CHANGE } from 'react-router-redux'
 
 const actionTypes = {
     SET_NAME: "SET_NAME",
@@ -62,6 +63,8 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: [], 
             state = state.set("errors", Immutable.fromJS([]));
         }
     switch (action.type) {
+        case LOCATION_CHANGE:
+            return Immutable.fromJS({coordinates: [], errors: []});
         case actionTypes.SET_ID:
             return state.set("id", action.id);
         case actionTypes.SET_NAME:
