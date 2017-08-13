@@ -9,7 +9,12 @@ const translations = {
     generalError: "Something bad happened, please try again later",
     nextPage: "Next",
     prevPage: "Previous",
-    loadFromFile: "Load from file"
+    loadFromFile: "Load from file",
+    listTitle: "Lists of coordinates",
+    id: "Id",
+    name: "Name",
+    edit: "Edit",
+    delete: "Delete"
 };
 
 export default translations;

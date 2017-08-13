@@ -21,6 +21,7 @@
     "chai": "^4.1.1",
     "json-loader": "^0.5.7",
     "mocha": "^3.5.0",
+    "simple-mock": "^0.8.0",
     "webpack": "^3.5.4"
   },
   "dependencies": {

@@ -2,14 +2,28 @@ const calculateDistance = (cooOne, cooTwo) =>
     Math.sqrt(Math.pow((cooOne.pointX - cooTwo.pointX), 2) + Math.pow((cooOne.pointY - cooTwo.pointY), 2));
 
 const areTheSame = (cooOne, cooTwo) => cooOne.pointX === cooTwo.pointX && cooOne.pointY === cooTwo.pointY;
+const doesSquareContain = (square, coordinate) =>
+    areTheSame(square.cooOne, coordinate)
+    || areTheSame(square.cooTwo, coordinate)
+    || areTheSame(square.cooThree, coordinate)
+    || areTheSame(square.cooFour, coordinate);
 
 let foundSquares = [];
 
-const doesSquareRepeat = (cooOne, cooTwo, cooThree, cooFour) => {
-    
+const doesSquareRepeat = (s) => {
+    const result = foundSquares.length > 0 && foundSquares.every(square => {
+        return doesSquareContain(square, s.cooOne)
+            && doesSquareContain(square, s.cooTwo)
+            && doesSquareContain(square, s.cooThree)
+            && doesSquareContain(square, s.cooFour)
+    });
+    if (!result){
+        foundSquares.push(s)
+    }
+    return result;
 }
 
-const findSquares = (coordinateList, onSquareFound) => {
+const findUniqueSquares = (coordinateList, onNewSquareFound) => {
     let totalSquareCount = 0;
     for (var i = 0; i < coordinateList.length; i++) {
         for (var j = 0; j < coordinateList.length; j++) {
@@ -39,7 +53,16 @@ const findSquares = (coordinateList, onSquareFound) => {
                     if (fourthSecondDist !== firstThirdDist){
                         continue;
                     }
-                    onNewSquareFound(coordinateList[i], coordinateList[j], coordinateList[k], coordinateList[l]);
+                    const square = {
+                        cooOne: coordinateList[i],
+                        cooTwo:  coordinateList[j],
+                        cooThree: coordinateList[k],
+                        cooFour: coordinateList[l]
+                    };
+                    if (doesSquareRepeat(square)){
+                        break;
+                    }
+                    onNewSquareFound(square);
                     totalSquareCount++;
                     break; //no need to finish iterating the fourth time, if the square is found
                 };
@@ -49,4 +72,4 @@ const findSquares = (coordinateList, onSquareFound) => {
     return totalSquareCount;
 }
 
-export default findSquares;
+export default findUniqueSquares;

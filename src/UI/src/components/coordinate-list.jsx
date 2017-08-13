@@ -1,41 +1,65 @@
 import React from "react";
 import translations from "../configuration/translations";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
-const createList = (items, onRemoveClick) => {
-    return <ul>{items.toArray().map((item, key) => <li key={key}><Link to={`/${item.get("id")}`}>{item.get("name")}</Link><span onClick={() => onRemoveClick(item.get("id"), key)}>-</span></li>)}</ul>;
-}
-const itemsPerPageSelection = [5, 10, 20, 50];
+const itemsPerPageSelection = [5, 10, 30, 50];
 const sortBySelection = [{name: "default", value: 1},{name: "name", value: 2}];
-
+const getListItems = (props) => {
+    return <div className="row">
+        <div className="medium-height">
+            <table className="u-full-width">
+                <thead>
+                    <tr>
+                    <th>{translations.id}</th>
+                    <th>{translations.name}</th>
+                    <th></th>
+                    <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {props.items.toArray().map((item, key) =>
+                    <tr key={key}>
+                        <td>{item.get("id")}</td>
+                        <td>{item.get("name")}</td>
+                        <td><Link className="button" to={`/${item.get("id")}`}>{translations.edit}</Link></td>
+                        <td><button className="button" onClick={() => props.onRemoveClick(item.get("id"), key)}>{translations.delete}</button></td>
+                    </tr>)}
+                </tbody>
+            </table>
+        </div>
+    </div>
+};
 class CoordinateList extends React.Component {
     componentDidMount() {
         this.props.getData();
     }
     render() {
-        if (this.props.items.size === 0){
-            return <div><Link to="/0">{translations.addList}</Link></div>
-        }
-
         return (
-            <div>
-                <div>
-                    <span>Items per page</span>
-                    <select value={this.props.itemsPerPage} onChange={(val) => this.props.onItemsInPageChange(val.target.value)}>
-                        {itemsPerPageSelection.map((item, key)=> <option key={key} value={item}>{item}</option>)}
-                    </select>
-                    <span>Sort by</span>
-                    <select value={this.props.currentSortBy} onChange={(val) => this.props.onSortByChange(val.target.value)}>
-                        {sortBySelection.map((item) => <option key={item.value} value={item.value}>{item.name}</option>)}
-                    </select>
-                    </div>
-                <div><Link to="/0">{translations.addList}</Link>
-                    {createList(this.props.items, this.props.onRemoveClick)}
+            <div className="container">
+                <div className="row">
+                    <div className="nine columns"><h5>{translations.listTitle}</h5></div>
+                    <div className="three columns u-pull-right"><Link className="button button-primary" to="/0">{translations.addList}</Link></div>
                 </div>
-                <div>
-                    {this.props.getPrevLink ? <span onClick={this.props.getPrevLink}>{translations.prevPage}</span> : <span>{translations.prevPage}</span>}
-                    {this.props.getNextLink ? <span onClick={this.props.getNextLink}>{translations.nextPage}></span> : <span>{translations.nextPage}</span>}
+                {this.props.items.size ? getListItems(this.props): null}
+                <div className="row mt-10">
+                <div className="one column">
+                    {this.props.getPrevLink ? <button onClick={this.props.getPrevLink}>{`<`}</button> : <button className="disabled">{`<`}</button>}
                 </div>
+                <div className="one column">
+                    {this.props.getNextLink ? <button onClick={this.props.getNextLink}>{`>`}</button> : <button className="disabled">{`>`}</button>}
+                </div>
+                <div className="three columns u-pull-right" value={this.props.itemsPerPage} onChange={(val) =>  this.props.onItemsInPageChange(val.target.value)}>
+                    <select className="u-pull-right">
+                        {itemsPerPageSelection.map((item, key) => <option key={key} value={item}>{item} items per page</option>)}
+                    </select>
+                </div>
+                <div className="two columns u-pull-right">
+                    <select value={this.props.currentSortBy} onChange={(val) => this.props.onSortByChange(val.target.value)} className="u-pull-right">
+                        <option value="id">Sort by Id</option>
+                        <option value="name">Sort by Name</option>
+                    </select>
+                </div>
+            </div>
             </div>);
     }
 }

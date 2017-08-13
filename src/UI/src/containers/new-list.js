@@ -1,12 +1,12 @@
 import NewList from "../components/new-list";
 import {EditReducer, actions} from "../reducers/edit";
 import React from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import Immutable from "immutable";
 import {getAllItems, getItem, saveItem} from "../api/coordinate-list-service";
 import {push} from 'react-router-redux';
 import translations from "../configuration/translations";
-import {readFileToString} from "../services/file-loader";
+import {readFileToString} from "../services/file-reader";
 
 const mapStateToProps = (state) => {
   return {

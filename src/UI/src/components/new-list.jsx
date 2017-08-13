@@ -11,7 +11,6 @@ class NewList extends React.Component {
         if (this.props.errors.size > 0){
             errorContainer = <ul>{this.props.errors.toArray().map((msg, index) => <li key={index}>{msg}</li>)}</ul>
         }
-        
         return (
             <div>
                 {errorContainer}
