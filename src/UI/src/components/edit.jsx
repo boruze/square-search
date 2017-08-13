@@ -4,11 +4,10 @@ import MessageComponent from "./message";
 import {Link} from 'react-router-dom';
 
 const renderForm = (props) => {
-    console.log(props.squares);
     return <form>
                 <div className="row">
                     <div className="six columns">
-                        <label>List name</label>
+                        <label>{translations.listName}</label>
                         <input className="u-full-width" onChange={(ev) => props.onNameChange(ev.target.value)} value={props.name} type="text" placeholder={translations.listName}/>
                     </div>
                 </div>

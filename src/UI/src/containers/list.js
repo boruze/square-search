@@ -18,33 +18,38 @@ const getRouteWithDefaultValues = (state) => {
     return result;
 }
 const loadItems = (dispatch, limit, offset, sortBy) => {
-      dispatch(actions.setItems([], 0));
-      return getAllItems(limit, offset, sortBy)
-        .then(items => {
-          total = items.totalCount;
-          return dispatch(actions.setItems(items.items, items.totalCount));
-        },
-        (resp) => {
-          return dispatch(actions.setListMessage({type: "error", message: translations.generalError}));
-        });
+  dispatch(actions.setItems([], 0));
+  return getAllItems(limit, offset, sortBy)
+    .then(items => {
+      total = items.totalCount;
+      return dispatch(actions.setItems(items.items, items.totalCount));
+    });
 }
-const getPrevLink = (dispatch, state) => {
-      const queryStr = getRouteWithDefaultValues(state);
-      const newOffset = queryStr.offset - queryStr.limit;
-      return (newOffset) >= 0 ?
-        () => {
-          dispatch(push(`/?limit=${queryStr.limit}&offset=${newOffset}&sortBy=${queryStr.sortBy}`));
-          return loadItems(dispatch, queryStr.limit, newOffset, queryStr.sortBy);
-         } : null;
+const renderPrevLink = (state) => {
+  const queryStr = getRouteWithDefaultValues(state);
+  const newOffset = queryStr.offset - queryStr.limit;
+  return (newOffset) >= 0;
 }
-const getNextLink = (dispatch, state) => {
-      const queryStr = getRouteWithDefaultValues(state);
-      const newOffset = queryStr.offset + queryStr.limit;
-      return (newOffset) <= total ?
-        () => {
-          dispatch(push(`/?limit=${queryStr.limit}&offset=${newOffset}&sortBy=${queryStr.sortBy}`))
-          return loadItems(dispatch, queryStr.limit, newOffset, queryStr.sortBy);
-         } : null;
+const getOnPrevLinkClick = (dispatch, state) => {
+  const queryStr = getRouteWithDefaultValues(state);
+  const newOffset = queryStr.offset - queryStr.limit;
+  return () => {
+      dispatch(push(`/?limit=${queryStr.limit}&offset=${newOffset}&sortBy=${queryStr.sortBy}`));
+      return loadItems(dispatch, queryStr.limit, newOffset, queryStr.sortBy);
+      }
+}
+const getOnNextLinkClick = (dispatch, state) => {
+  const queryStr = getRouteWithDefaultValues(state);
+  const newOffset = +queryStr.offset + +queryStr.limit;
+  return () => {
+      dispatch(push(`/?limit=${queryStr.limit}&offset=${newOffset}&sortBy=${queryStr.sortBy}`))
+      return loadItems(dispatch, queryStr.limit, newOffset, queryStr.sortBy);
+      };
+}
+const renderNextLink = (state) => {
+  const queryStr = getRouteWithDefaultValues(state);
+  const newOffset = +queryStr.offset + +queryStr.limit;
+  return (newOffset) <= total;
 }
 const mapDispatchToProps = (dispatch, state) => {
   return {
@@ -65,17 +70,19 @@ const mapDispatchToProps = (dispatch, state) => {
       loadItems(dispatch, queryStr.limit, 0, newValue);
       return dispatch(push(`/?limit=${queryStr.limit}&offset=${0}&sortBy=${newValue}`));
     },
-    prevLink: getPrevLink(dispatch, state),
-    nextLink: getNextLink(dispatch, state)
+    onPrevLinkClick: getOnPrevLinkClick(dispatch, state),
+    onNextLinkClick: getOnNextLinkClick(dispatch, state)
   }
 }
 const mapStateToProps = (state) => {
   const queryStr = getRouteWithDefaultValues(state.router);
   return {
     items: state.list.get("lists"),
-    itemsPerPage: queryStr.limit,
     message: state.list.get("message"),
-    currentSortBy: queryStr.sortBy
+    currentSortBy: queryStr.sortBy,
+    currentLimit: queryStr.limit,
+    prevLink: renderPrevLink(state.router),
+    nextLink: renderNextLink(state.router),
   };
 }
-export default connect(mapStateToProps,mapDispatchToProps)(Component);
+export default connect(mapStateToProps,mapDispatchToProps, )(Component);

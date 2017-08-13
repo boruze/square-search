@@ -10,17 +10,17 @@ namespace SquareSearch.Api.DtoModels.Mappings
             return new Entities.CoordinateList(
                 id,
                 list.Name,
-                list.Coordinates != null ? list.Coordinates.ToCoordinateEntitySet(id) : new HashSet<Entities.Coordinate>());
+                list.Coordinates != null ? list.Coordinates.ToCoordinateEntitySet() : new HashSet<Entities.Coordinate>());
         }
 
-        public static Entities.Coordinate ToCoordinateEntity(this Coordinate coo, int listId)
+        public static Entities.Coordinate ToCoordinateEntity(this Coordinate coo)
         {
-            return new Entities.Coordinate(0, listId, coo.PointX, coo.PointY);
+            return new Entities.Coordinate(coo.PointX, coo.PointY);
         }
         
-        public static ISet<Entities.Coordinate> ToCoordinateEntitySet(this IEnumerable<Coordinate> cooList, int listId)
+        public static ISet<Entities.Coordinate> ToCoordinateEntitySet(this IEnumerable<Coordinate> cooList)
         {
-            return new HashSet<Entities.Coordinate>(cooList.Select(c => c.ToCoordinateEntity(listId)));
+            return new HashSet<Entities.Coordinate>(cooList.Select(c => c.ToCoordinateEntity()));
         }
     }
 }

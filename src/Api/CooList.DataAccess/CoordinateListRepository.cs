@@ -18,7 +18,7 @@ namespace CooList.WebApi.DataAccess
         {
             _dbConnStr = dbConnectionString;
         }
-        
+
         public async Task CreateAsync(CoordinateList item)
         {
             using (var con = new NpgsqlConnection(_dbConnStr))
@@ -34,12 +34,12 @@ namespace CooList.WebApi.DataAccess
                 con.Close();
             }
         }
-        
+
         public async Task DeleteAsync(int id)
         {
             using (var con = new NpgsqlConnection(_dbConnStr))
             {
-                await con.ExecuteAsync("delete graph.list where did = @id", new { id = id }).ConfigureAwait(false);
+                await con.ExecuteAsync("delete from graph.list where did = @id", new { id = id }).ConfigureAwait(false);
             }
         }
 
@@ -47,8 +47,16 @@ namespace CooList.WebApi.DataAccess
         {
             using (var con = new NpgsqlConnection(_dbConnStr))
             {
-                return (await con.QueryAsync<CoordinateList>("select did as id, name from graph.list where name = @name",
+                var result = (await con.QueryAsync<CoordinateList>("select did as id, name from graph.list where name = @name",
                     new { name = name }).ConfigureAwait(false)).SingleOrDefault();
+                if (result == null)
+                {
+                    return result;
+                }
+                var coordinates = (await con.QueryAsync<Coordinate>("select point_x as pointx, point_y as pointy from graph.coordinates where did_list = @did_list",
+                    new { did_list = result.Id }).ConfigureAwait(false)).ToList();
+                result.Coordinates = new HashSet<Coordinate>(coordinates);
+                return result;
             }
         }
 
@@ -56,19 +64,29 @@ namespace CooList.WebApi.DataAccess
         {
             using (var con = new NpgsqlConnection(_dbConnStr))
             {
-                return (await con.QueryAsync<CoordinateList>("select did as id, name from graph.list where did = @id",
+                var result = (await con.QueryAsync<Coordinate>("select point_x as pointx, point_y as pointy from graph.coordinates where did_list = @did_list",
+                    new { did_list = id }).ConfigureAwait(false)).ToList();
+                var item = (await con.QueryAsync<CoordinateList>("select did as id, name from graph.list where did = @did",
                     new { did = id }).ConfigureAwait(false)).SingleOrDefault();
+                if (item == null)
+                {
+                    return item;
+                }
+                item.Coordinates = new HashSet<Coordinate>(result);
+                return item;
             }
         }
 
-        public async Task<IReadOnlyCollection<CoordinateList>> ListAsync(int offset, int limit, SortBy sortBy)
+        public async Task<CoordinateLists> ListAsync(int offset, int limit, SortBy sortBy)
         {
             var orderBy = sortBy == SortBy.Name ? "name" : "did";
             using (var con = new NpgsqlConnection(_dbConnStr))
             {
-                var result = (await con.QueryAsync<CoordinateList>("select did as id, name from graph.list order by @order_by desc limit @limit offset @offset",
+                var result = (await con.QueryAsync<CoordinateList>("select did as id, name from graph.list order by " + orderBy + " asc limit @limit offset @offset",
                     new { limit = limit, offset = offset, order_by = orderBy }).ConfigureAwait(false)).ToList();
-                return result;
+                var count = (await con.QueryAsync<int>("select count(*) from graph.list",
+                    new { limit = limit, offset = offset, order_by = orderBy }).ConfigureAwait(false)).Single();
+                return new CoordinateLists(count, result);
             }
         }
 
@@ -87,7 +105,7 @@ namespace CooList.WebApi.DataAccess
                 con.Close();
             }
         }
-        
+
         private Task InsertCoordinatesAsync(int listId, ISet<Coordinate> coordinates, IDbConnection connection, IDbTransaction transaction)
         {
             if (coordinates.Count == 0)

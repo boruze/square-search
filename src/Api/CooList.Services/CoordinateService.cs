@@ -33,7 +33,7 @@ namespace SquareSearch.Services
             return await _cooListRepository.GetAsync(name).ConfigureAwait(false);
         }
 
-        public async Task<IReadOnlyCollection<CoordinateList>> GetListofListsAsync(int limit, int offset, SortBy sortBy)
+        public async Task<CoordinateLists> GetListofListsAsync(int limit, int offset, SortBy sortBy)
         {
             return await _cooListRepository.ListAsync(offset, limit, sortBy).ConfigureAwait(false);
         }

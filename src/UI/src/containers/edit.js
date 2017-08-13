@@ -8,17 +8,21 @@ import {push} from 'react-router-redux';
 import translations from "../configuration/translations";
 import {readFileToString} from "../services/file-reader";
 import findUniqueSquaresPromise from "../services/square-search";
+import queryStringFromHash from "../services/query-string-parser";
 
 const mapStateToProps = (state) => {
   const squares = state.edit.get("squares");
+  const id = state.edit.get("id");
+  const queryParams = queryStringFromHash(state.router);
   return {
     coordinates: state.edit.get("coordinates").toJSON() || [],
     title: state.edit.get("name") || translations.newList,
-    name: state.edit.get("name"),
+    name: state.edit.get("name") || "",
     squares: squares.size ? squares.toJSON() : [],
     squareCount: squares.size,
     message: state.edit.get("message"),
-    renderForm: !state.edit.get("id") || state.edit.get("id") && state.edit.get("name")
+    id: id,
+    renderForm: !id || id && state.edit.get("name")
   };
 }
 const mapApiErrors = (response) => {
@@ -68,9 +72,9 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(actions.clearSquares());
         return dispatch(actions.setCoordinates([]));
     },
-    onSubmitClick: (id = 0, name, coordinates) => {
-        return saveItem(id, name, coordinates.toJS())
-          .then(() => dispatch(push(`/?limit=5&offset=1&sortBy=1`)),
+    onSubmitClick: (id, name, coordinates) => {
+        return saveItem(id, name, coordinates)
+          .then(() => dispatch(push(`/?limit=5&offset=0&sortBy=1`)),
           (resp) => dispatch(actions.setMessage({type: "error", message: mapApiErrors(resp)})));
     },
     loadFromFile: (file) => {

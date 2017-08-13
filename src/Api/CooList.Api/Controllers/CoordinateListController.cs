@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using SquareSearch.Api.DtoModels;
 using SquareSearch.Services.Interfaces;
-using System.Linq;
 using SquareSearch.Api.DtoModels.Mappings;
 using System.Threading.Tasks;
 using SquareSearch.Api.Validators;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 
 namespace SquareSearch.Api.Controllers
 {
@@ -24,10 +26,10 @@ namespace SquareSearch.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult(ModelState);
             }
 
-            var result = await _service.GetList(id).ConfigureAwait(false);            
+            var result = await _service.GetList(id).ConfigureAwait(false);
             if (result == null)
             {
                 return new NotFoundResult();
@@ -38,19 +40,23 @@ namespace SquareSearch.Api.Controllers
 
         // GET api/values
         [HttpGet]
-        public async Task<IActionResult> GetListAsync(int limit, int offset, SortBy sortBy = SortBy.Id)
+        public async Task<IActionResult> GetListAsync(int limit = 10, int offset = 0, SortBy sortBy = SortBy.Id)
         {
+            if (limit < 0 || offset < 0 || !Enum.IsDefined(typeof(SortBy), sortBy))
+            {
+                return new BadRequestObjectResult("Invalid query string");
+            }
             var result = await _service.GetListofListsAsync(limit, offset, (Entities.Enums.SortBy)sortBy).ConfigureAwait(false);
-            return new ObjectResult(result.Select(r => r.ToCoordinateListDto()));
+            return new ObjectResult(result.ToCoordinateListContainerDto());
         }
 
         // POST api/values
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody]CoordinateList value)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || value == null)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult(ModelState);
             }
 
             var validator = new CoordinateListValidator();
@@ -58,7 +64,7 @@ namespace SquareSearch.Api.Controllers
 
             if (!validationResult.IsValid)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult(MapValidationResultToModelState(validationResult));
             }
 
             var result = await _service.SaveList(value.ToCoordinateListEntity(0)).ConfigureAwait(false);
@@ -70,9 +76,9 @@ namespace SquareSearch.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, [FromBody]CoordinateList value)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || value == null)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult(ModelState);
             }
 
             var existingList = await _service.GetList(id).ConfigureAwait(false);
@@ -86,7 +92,7 @@ namespace SquareSearch.Api.Controllers
 
             if (!validationResult.IsValid)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult(MapValidationResultToModelState(validationResult));
             }
 
             var result = await _service.SaveList(value.ToCoordinateListEntity(id)).ConfigureAwait(false);
@@ -106,6 +112,16 @@ namespace SquareSearch.Api.Controllers
 
             await _service.DeleteList(id).ConfigureAwait(false);
             return new EmptyResult();
+        }
+
+        private ModelStateDictionary MapValidationResultToModelState(ValidationResult result)
+        {
+            var dictionary = new ModelStateDictionary();
+            foreach (var error in result.Errors)
+            {
+                dictionary.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
+            return dictionary;
         }
     }
 }

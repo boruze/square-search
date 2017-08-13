@@ -31,15 +31,16 @@ const getListItems = (props) => {
     </div>
 };
 const getPagingAndSorting = (props) => {
+    console.log(props)
     return <div className="row mt-10">
                 <div className="one column">
-                    {props.getPrevLink ? <button onClick={props.getPrevLink}>{`<`}</button> : <button className="disabled">{`<`}</button>}
+                    {props.prevLink ? <button onClick={props.onPrevLinkClick}>{`<`}</button> : <button className="disabled">{`<`}</button>}
                 </div>
                 <div className="one column">
-                    {props.getNextLink ? <button onClick={this.props.getNextLink}>{`>`}</button> : <button className="disabled">{`>`}</button>}
+                    {props.nextLink ? <button onClick={props.onNextLinkClick}>{`>`}</button> : <button className="disabled">{`>`}</button>}
                 </div>
-                <div className="three columns u-pull-right" value={props.itemsPerPage} onChange={(val) =>  props.onItemsInPageChange(val.target.value)}>
-                    <select className="u-pull-right">
+                <div className="three columns u-pull-right">
+                    <select value={props.currentLimit} className="u-pull-right" onChange={(val) =>  props.onItemsInPageChange(val.target.value)}>
                         {itemsPerPageSelection.map((item, key) => <option key={key} value={item}>{item} items per page</option>)}
                     </select>
                 </div>

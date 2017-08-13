@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SquareSearch.Api.Controllers;
+using SquareSearch.Api.DtoModels;
 using SquareSearch.Services.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -27,10 +26,10 @@ namespace SquareSearch.Tests.Controllers
             controller.ModelState.AddModelError("id", "could not parse value");
 
             //act
-            var result = controller.PutAsync(10, new Api.DtoModels.CoordinateList(10, "test", null)).Result;
+            var result = controller.PutAsync(10, new CoordinateList(10, "test", null)).Result;
 
             //verify
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -44,14 +43,14 @@ namespace SquareSearch.Tests.Controllers
             //act
             var result = controller.PutAsync(
                 10,
-                new Api.DtoModels.CoordinateList(
+                new CoordinateList(
                     10,
                     "test",
-                    new List<Api.DtoModels.Coordinate>(){ new Api.DtoModels.Coordinate(999999999, 52) })
+                    new List<Coordinate>(){ new Coordinate(999999999, 52) })
                     ).Result;
 
             //verify
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -63,7 +62,7 @@ namespace SquareSearch.Tests.Controllers
             var controller = new CoordinateListController(_cooServiceMock.Object);
 
             //act
-            var result = controller.PutAsync(10, new Api.DtoModels.CoordinateList(10, "test", null)).Result;
+            var result = controller.PutAsync(10, new CoordinateList(10, "test", null)).Result;
 
             //verify
             Assert.IsType<NotFoundResult>(result);
@@ -77,10 +76,10 @@ namespace SquareSearch.Tests.Controllers
             controller.ModelState.AddModelError("id", "could not parse value");
 
             //act
-            var result = controller.PostAsync(new Api.DtoModels.CoordinateList(10, "test", null)).Result;
+            var result = controller.PostAsync(new CoordinateList(10, "test", null)).Result;
 
             //verify
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -93,14 +92,14 @@ namespace SquareSearch.Tests.Controllers
 
             //act
             var result = controller.PostAsync(
-                new Api.DtoModels.CoordinateList(
+                new CoordinateList(
                     10,
                     "test",
-                    new List<Api.DtoModels.Coordinate>() { new Api.DtoModels.Coordinate(999999999, 52) })
+                    new List<Coordinate>() { new Coordinate(999999999, 52) })
                     ).Result;
 
             //verify
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -118,5 +117,43 @@ namespace SquareSearch.Tests.Controllers
             Assert.IsType<NotFoundResult>(result);
         }
 
+        [Fact]
+        public void GetListAsync_ShouldNotAllowInvalidSortByENum()
+        {
+            //arrange
+            var controller = new CoordinateListController(_cooServiceMock.Object);
+
+            //act
+            var result = controller.GetListAsync(0, 0, (SortBy)152).Result;
+
+            //verify
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public void GetListAsync_ShouldNotAllowNegavtiveOffset()
+        {
+            //arrange
+            var controller = new CoordinateListController(_cooServiceMock.Object);
+
+            //act
+            var result = controller.GetListAsync(0, -9).Result;
+
+            //verify
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public void GetListAsync_ShouldNotAllowNegavtiveLimit()
+        {
+            //arrange
+            var controller = new CoordinateListController(_cooServiceMock.Object);
+
+            //act
+            var result = controller.GetListAsync(-10, 10).Result;
+
+            //verify
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
     }
 }

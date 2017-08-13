@@ -2,6 +2,17 @@
 
 namespace SquareSearch.Entities
 {
+    public class CoordinateLists
+    {
+        public int TotalCount { get; }
+        public ICollection<CoordinateList> Items { get; }
+
+        public CoordinateLists(int totalCount, ICollection<CoordinateList> items)
+        {
+            TotalCount = totalCount;
+            Items = items;
+        }
+    }
     public class CoordinateList
     {
         public int Id { get; }
