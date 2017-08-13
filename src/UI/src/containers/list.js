@@ -1,4 +1,4 @@
-import CoordinateList from "../components/coordinate-list";
+import Component from "../components/list";
 import {ListReducer, actions} from "../reducers/list";
 import React from 'react';
 import { connect } from 'react-redux';
@@ -73,4 +73,4 @@ const mapStateToProps = (state) => {
     currentSortBy: queryStr.sortBy
   };
 }
-export default connect(mapStateToProps,mapDispatchToProps)(CoordinateList);
+export default connect(mapStateToProps,mapDispatchToProps)(Component);

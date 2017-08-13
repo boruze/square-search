@@ -8,7 +8,7 @@ const actionTypes = {
     UPDATE_COORDINATE: "UPDATE_COORDINATE",
     REMOVE_COORDINATE: "REMOVE_COORDINATE",
     SET_COORDINATES: "SET_COORDINATES",
-    SET_ERRORS: "SET_ERRORS"
+    SET_MESSAGE: "SET_MESSAGE"
 }
 
 export const actions = {
@@ -49,22 +49,27 @@ export const actions = {
             index: index,
         }
     },
-    setErrors: (errors) => {        
+    setMessage: (message) => {
         return {
-            type: actionTypes.SET_ERRORS,
-            errors: errors,
+            type: actionTypes.SET_MESSAGE,
+            message: message,
         }
     }
 }
 
-export default function EditReducer (state = Immutable.fromJS({coordinates: [], errors: []}), action) {
+export default function EditReducer (state = Immutable.fromJS({coordinates: []}), action) {
     const existingCoordinates = state.get("coordinates");
-    if (action.type !== actionTypes.SET_ERRORS){
-            state = state.set("errors", Immutable.fromJS([]));
+    if (action.type !== actionTypes.SET_MESSAGE){
+            state = state.set("message", undefined);
         }
     switch (action.type) {
         case LOCATION_CHANGE:
-            return Immutable.fromJS({coordinates: [], errors: []});
+            if (action.payload.pathname !== "/") {
+                const id = action.payload.pathname.substring(1, action.payload.pathname.length);
+                return state.set("id", +id);
+            } else {
+                return Immutable.fromJS({coordinates: [], message: undefined});
+            }
         case actionTypes.SET_ID:
             return state.set("id", action.id);
         case actionTypes.SET_NAME:
@@ -77,8 +82,8 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: [], 
             return state.set("coordinates", existingCoordinates.set(action.index, action.coordinate));
         case actionTypes.REMOVE_COORDINATE:
             return state.set("coordinates", existingCoordinates.delete(action.index));
-        case actionTypes.SET_ERRORS:
-            return state.set("errors", Immutable.fromJS(action.errors));
+        case actionTypes.SET_MESSAGE:
+            return state.set("message", Immutable.fromJS(action.message));
         default:
             return state;
     }

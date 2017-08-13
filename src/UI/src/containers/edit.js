@@ -1,4 +1,4 @@
-import NewList from "../components/new-list";
+import Component from "../components/edit";
 import {EditReducer, actions} from "../reducers/edit";
 import React from 'react';
 import {connect} from 'react-redux';
@@ -11,19 +11,19 @@ import {readFileToString} from "../services/file-reader";
 const mapStateToProps = (state) => {
   return {
     coordinates: state.edit.get("coordinates") || Immutable.fromJS([]),
-    name: state.edit.get("name") || "",
     errors: state.edit.get("errors") || Immutable.fromJS([]),
-    title: state.edit.get("name") || translations.newLists
+    title: state.edit.get("name") || translations.newList,
+    message: state.edit.get("message"),
+    renderForm: !state.edit.get("id") || state.edit.get("id") && state.edit.get("name")
   };
 }
 const mapApiErrors = (response) => {
-  let errors = []
   if (response.status === 400) {
-    errors = Object.keys(response.response.body).map(key => response.response.body[key]);
+    //in v1, only one message is supported
+    return response.response.body[Object.keys(response.response.body)[0]];
   } else {
-    errors.push(translations.generalError);
+    return translations.generalError;
   }
-  return errors;
 }
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -34,7 +34,8 @@ const mapDispatchToProps = (dispatch) => {
                 dispatch(actions.setName(listItem.name));
                 dispatch(actions.setId(listItem.id));
                 dispatch(actions.setCoordinates(listItem.coordinates));
-            });
+            },
+          (resp) => dispatch(actions.setMessage({type: "error", message: mapApiErrors(resp)})));
       }
     },
     onCoordinateChange: (index, coordinate) => {
@@ -54,7 +55,8 @@ const mapDispatchToProps = (dispatch) => {
     },
     onSubmitClick: (id = 0, name, coordinates) => {
         return saveItem(id, name, coordinates.toJS())
-          .then(() => dispatch(push(`/?limit=5&offset=1&sortBy=1`)), (resp) => dispatch(actions.setErrors(mapApiErrors(resp))));
+          .then(() => dispatch(push(`/?limit=5&offset=1&sortBy=1`)),
+          (resp) => dispatch(actions.setMessage({type: "error", message: mapApiErrors(resp)})));
     },
     loadFromFile: (file) => {
       return readFileToString(file.target.files[0])
@@ -73,14 +75,14 @@ const mapDispatchToProps = (dispatch) => {
               });
               dispatch(actions.setCoordinates(stateItems));
               if (uniqueCoordinatePairs.length !== coordinatePairs.length){
-                dispatch(actions.setErrors(["Duplicate coordinates were removed"]));
+                dispatch(actions.setMessage({type: "info", message: "Duplicate coordinates were removed"}));
               }
           }
           catch(err) {
-              dispatch(actions.setErrors(["Could not parse file"]));
+              dispatch(actions.setMessage({type: "error", message: "Could not parse file"}));
           }
         });
     }
   }
 }
-export default connect(mapStateToProps,mapDispatchToProps)(NewList);
+export default connect(mapStateToProps,mapDispatchToProps)(Component);
