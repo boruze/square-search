@@ -75,7 +75,12 @@ const renderForm = (props) => {
                 </div>
             </div>
             <div className="row">
-                <input className="button-primary" onClick={() => props.onSubmitClick(props.id, props.name, props.coordinates)} type="submit" value="Submit"/>
+                <input
+                    className="button-primary"
+                    onClick={() => props.onSubmitClick(props.id, props.name, props.coordinates)}
+                    type="submit"
+                    value="Submit"/>
+                {props.exportUrl ? <a className="button" href={props.exportUrl} download="coordinates.txt">Export</a>: <button className="button disabled">Export</button>}
             </div>
             </form>;
 }

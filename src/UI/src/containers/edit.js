@@ -14,16 +14,23 @@ const mapStateToProps = (state) => {
   const squares = state.edit.get("squares");
   const id = state.edit.get("id");
   const queryParams = queryStringFromHash(state.router);
+  const coordinates = state.edit.get("coordinates").toJSON();
   return {
-    coordinates: state.edit.get("coordinates").toJSON() || [],
+    coordinates: coordinates || [],
     title: state.edit.get("name") || translations.newList,
     name: state.edit.get("name") || "",
     squares: squares.size ? squares.toJSON() : [],
     squareCount: squares.size,
     message: state.edit.get("message"),
     id: id,
-    renderForm: !id || id && state.edit.get("name")
+    renderForm: !id || id && state.edit.get("name"),
+    exportUrl: coordinates.length > 0 ? generateExportUrl(coordinates) : null
   };
+}
+const generateExportUrl = (coordinates) => {
+  const coordinatesToText = coordinates.map(coo => coo.pointX +" " + coo.pointY).join("\r\n")
+  const contents = new Blob([coordinatesToText], { type: 'text/plain' }); 
+  return URL.createObjectURL(contents);
 }
 const mapApiErrors = (response) => {
   if (response.status === 400) {
