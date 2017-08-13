@@ -3,7 +3,7 @@ import translations from "../configuration/translations";
 import {Link} from 'react-router-dom';
 import MessageComponent from "./message";
 
-const itemsPerPageSelection = [5, 10, 30, 50];
+const itemsPerPageSelection = [5, 10, 20, 50];
 const sortBySelection = [{name: "default", value: 1},{name: "name", value: 2}];
 const getListItems = (props) => {
     return <div className="row">

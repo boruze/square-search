@@ -104,6 +104,9 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(actions.addCoordinate({pointX: 0, pointY: 0}));
       return findUniqueSquaresPromise(state.edit.get("coordinates").toJSON().slice(offset, limit + offset), onSquareFound);
     },
+    onLimitChange: (limit) => {
+      return dispatch(actions.setVisibleCoordinateFilter({limit: limit, offset: 0}));
+    },
     clearCoordinates: () => {
       dispatch(actions.clearSquares());
       dispatch(actions.setVisibleCoordinateFilter({limit: 5, offset: 0}));

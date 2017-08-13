@@ -99,7 +99,7 @@ export default function EditReducer (state = Immutable.fromJS({coordinates: [], 
                 const id = action.payload.pathname.substring(1, action.payload.pathname.length);
                 return state.set("id", +id);
             } else {
-                return Immutable.fromJS({coordinates: [], squares: [], message: undefined, filterVisibleCoordinates: {}});
+                return Immutable.fromJS({coordinates: [], squares: [], message: undefined, filterVisibleCoordinates: {limit: 5, offset: 0}});
             }
         case actionTypes.SET_ID:
             return state.set("id", action.id);

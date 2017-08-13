@@ -3,6 +3,7 @@ import translations from "../configuration/translations";
 import MessageComponent from "./message";
 import {Link} from 'react-router-dom';
 
+const itemsPerPageSelection = [5, 10, 20, 50];
 const renderForm = (props) => {
     return <form>
                 <div className="row">
@@ -48,9 +49,16 @@ const renderForm = (props) => {
                         <div className="two columns">
                             {props.prevLink ? <button onClick={() => props.onPrevLinkClick(props.id, props.limit, props.offset)}>{`<`}</button> : <button className="disabled">{`<`}</button>}
                         </div>
-                        <div className="ten columns">
+                        <div className="four columns">
                             {props.nextLink ? <button onClick={() => props.onNextLinkClick(props.id, props.limit, props.offset)}>{`>`}</button> : <button className="disabled">{`>`}</button>}
                         </div>
+                        <div className="four columns">
+                            <div className="u-pull-right">
+                                <select value={props.limit} onChange={(val) => props.onLimitChange(val.target.value)}>
+                                    {itemsPerPageSelection.map((item, key) => <option key={key} value={item}>{item} items per page</option>)}
+                                </select>
+                            </div>
+                         </div>
                     </div>
                 </div>
                 <div className="six columns">
