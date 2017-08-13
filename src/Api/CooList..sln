@@ -2,15 +2,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SquareSearch.Api", "CoordinateList.Api\SquareSearch.Api.csproj", "{0410B770-8D1A-4D61-8D8E-C15557A05842}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CooList.Api", "CooList.Api\CooList.Api.csproj", "{0410B770-8D1A-4D61-8D8E-C15557A05842}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SquareSearch.Tests", "Api.Tests\SquareSearch.Tests.csproj", "{A5ECA1F3-5863-48A8-A710-666B0DE84CFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CooList.Tests", "Api.Tests\CooList.Tests.csproj", "{A5ECA1F3-5863-48A8-A710-666B0DE84CFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SquareSearch.Entities", "CoordinateList.Entities\SquareSearch.Entities.csproj", "{D7A3AD17-6F5E-4B4B-9C01-86041473930B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CooList.Entities", "CooList.Entities\CooList.Entities.csproj", "{D7A3AD17-6F5E-4B4B-9C01-86041473930B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SquareSearch.Services", "SquareSearch.Services\SquareSearch.Services.csproj", "{3A0DAB5F-7644-4B32-AD48-67F676632A9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CooList.Services", "CooList.Services\CooList.Services.csproj", "{3A0DAB5F-7644-4B32-AD48-67F676632A9A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SquareSearch.DataAccess", "CoordinateList.DataAccess\SquareSearch.DataAccess.csproj", "{12996193-9D11-4E05-A747-20EAF0277F0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CooList.DataAccess", "CooList.DataAccess\CooList.DataAccess.csproj", "{12996193-9D11-4E05-A747-20EAF0277F0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

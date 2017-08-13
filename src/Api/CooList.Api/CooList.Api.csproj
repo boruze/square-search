@@ -13,8 +13,8 @@
     <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="4.0.10" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoordinateList.DataAccess\SquareSearch.DataAccess.csproj" />
-    <ProjectReference Include="..\CoordinateList.Entities\SquareSearch.Entities.csproj" />
-    <ProjectReference Include="..\SquareSearch.Services\SquareSearch.Services.csproj" />
+    <ProjectReference Include="..\CooList.DataAccess\CooList.DataAccess.csproj" />
+    <ProjectReference Include="..\CooList.Entities\CooList.Entities.csproj" />
+    <ProjectReference Include="..\CooList.Services\CooList.Services.csproj" />
   </ItemGroup>
 </Project>

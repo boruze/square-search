@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoordinateList.Entities\SquareSearch.Entities.csproj" />
+    <ProjectReference Include="..\CooList.Entities\CooList.Entities.csproj" />
   </ItemGroup>
 
 </Project>

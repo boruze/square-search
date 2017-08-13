@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoordinateList.Api\SquareSearch.Api.csproj" />
-    <ProjectReference Include="..\SquareSearch.Services\SquareSearch.Services.csproj" />
+    <ProjectReference Include="..\CooList.Api\CooList.Api.csproj" />
+    <ProjectReference Include="..\CooList.Services\CooList.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
