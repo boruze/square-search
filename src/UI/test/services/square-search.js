@@ -1,4 +1,4 @@
-import findUniqueSquares from "../../src/services/square-search";
+import findUniqueSquaresPromise from "../../src/services/square-search";
 import {describe, it} from "mocha";
 import {expect} from "chai";
 import SimpleMock from "simple-mock";
@@ -19,10 +19,11 @@ describe("findUniqueSquares", () => {
             {pointX: 1000, pointY: 10}];
 
         //act
-        const result = findUniqueSquares(cooList, (x, y, z, w) => {return;});
-
-        //assert
-        expect(result).to.eq(1);
+        return findUniqueSquaresPromise(cooList, (x, y, z, w) => {return;})
+            .then((result) => {
+                //assert
+                return expect(result).to.eq(1);
+            });
     });
     
     it("calls the onSquareFound, if the square is found", () => {
@@ -40,9 +41,10 @@ describe("findUniqueSquares", () => {
             {pointX: 1000, pointY: 10}];
         let stub = SimpleMock.stub();
         //act
-        const result = findUniqueSquares(cooList, stub);
-
-        //assert
-        expect(stub.called);
+        const result = findUniqueSquaresPromise(cooList, stub)
+            .then((result) => {
+                //assert
+                return expect(stub.called);
+            });
     })
 })

@@ -68,7 +68,6 @@ const findUniqueSquares = (coordinateList, onNewSquareFound) => {
                         break;
                     }
                     onNewSquareFound(square);
-                    console.log("onNewSquareFound called")
                     
                     totalSquareCount++;
                     break; //no need to finish iterating the fourth time, if the square is found
@@ -80,7 +79,6 @@ const findUniqueSquares = (coordinateList, onNewSquareFound) => {
 }
 
 const findUniqueSquaresPromise = (coordinates, onSquareFound) => {
-    console.log("findUniqueSquaresPromise")
     return new Promise((resolve, reject) => {
         let count = findUniqueSquares(coordinates, onSquareFound);
         resolve(count);
